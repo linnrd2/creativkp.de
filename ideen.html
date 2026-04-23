@@ -303,7 +303,7 @@
 
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
-      import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+      import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
       const firebaseConfig = {
         apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
@@ -337,9 +337,13 @@
 
       async function ladeProjekte() {
         try {
-          const q = query(collection(db, 'projekte'), orderBy('erstelltAm', 'desc'));
-          const snapshot = await getDocs(q);
+          const snapshot = await getDocs(collection(db, 'projekte'));
           projekte = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          projekte.sort((a, b) => {
+            const tA = a.erstelltAm?.toDate?.()?.getTime() ?? 0;
+            const tB = b.erstelltAm?.toDate?.()?.getTime() ?? 0;
+            return tB - tA;
+          });
           renderPreviewList();
           renderSearchResults(searchInput.value);
         } catch (err) {

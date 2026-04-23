@@ -210,7 +210,7 @@
 
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
-      import { getFirestore, collection, getDocs, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+      import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
       const firebaseConfig = {
         apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
@@ -226,16 +226,18 @@
       const container = document.getElementById('recent-items');
 
       try {
-        const q = query(collection(db, 'projekte'), orderBy('erstelltAm', 'desc'), limit(5));
-        const snapshot = await getDocs(q);
-        if (snapshot.empty) {
+        const snapshot = await getDocs(collection(db, 'projekte'));
+        const alle = snapshot.docs.map(d => ({ name: d.data().name, t: d.data().erstelltAm?.toDate?.()?.getTime() ?? 0 }));
+        alle.sort((a, b) => b.t - a.t);
+        const neueste = alle.slice(0, 5);
+        if (neueste.length === 0) {
           container.innerHTML = '<div class="recent-item" style="color:#999">Noch keine Projekte gespeichert.</div>';
         } else {
           container.innerHTML = '';
-          snapshot.docs.forEach(doc => {
+          neueste.forEach(p => {
             const div = document.createElement('div');
             div.className = 'recent-item';
-            div.textContent = doc.data().name;
+            div.textContent = p.name;
             container.appendChild(div);
           });
         }

@@ -118,7 +118,7 @@
 
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
-      import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+      import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
       const firebaseConfig = {
         apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
@@ -138,18 +138,22 @@
 
       async function ladeMaterialien() {
         try {
-          const q = query(collection(db, 'materialien'), orderBy('erstelltAm', 'desc'));
-          const snapshot = await getDocs(q);
+          const snapshot = await getDocs(collection(db, 'materialien'));
+          const alle = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          alle.sort((a, b) => {
+            const tA = a.erstelltAm?.toDate?.()?.getTime() ?? 0;
+            const tB = b.erstelltAm?.toDate?.()?.getTime() ?? 0;
+            return tB - tA;
+          });
           list.innerHTML = '';
-          if (snapshot.empty) {
+          if (alle.length === 0) {
             list.innerHTML = '<li style="color:#999">Noch keine Materialien eingetragen.</li>';
             return;
           }
-          snapshot.docs.forEach(docSnap => {
-            const d = docSnap.data();
+          alle.forEach(d => {
             const li = document.createElement('li');
             li.innerHTML = `
-              <button class="delete-btn" data-id="${docSnap.id}" title="Löschen">✕</button>
+              <button class="delete-btn" data-id="${d.id}" title="Löschen">✕</button>
               <strong>${d.name}</strong>
               ${d.details ? `<span>${d.details}</span>` : ''}
             `;
