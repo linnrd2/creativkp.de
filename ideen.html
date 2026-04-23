@@ -250,8 +250,14 @@
       }
 
       @media (max-width: 720px) {
-        .page { padding: 28px 18px 50px; }
-        .headline { font-size: clamp(2.5rem, 12vw, 3.5rem); }
+        .page { padding: 24px 16px 50px; }
+        .headline { font-size: clamp(2.5rem, 12vw, 3.2rem); }
+        .search-bar { padding: 0.95rem 1rem; }
+        .search-item { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+        .search-link { width: 100%; text-align: center; }
+        .action-card { padding: 1.2rem 1rem; }
+        .idea-panel { padding: 2rem 1.5rem 1.8rem; }
+        .project-detail { padding: 1.6rem 1.2rem; }
       }
     </style>
   </head>
@@ -295,112 +301,134 @@
       <div id="project-detail" class="project-detail" aria-live="polite"></div>
     </main>
 
-    <script>
-      const projects = [
-        { name: 'Meerespapier Projekt', description: 'Öffne diese Projektidee direkt und arbeite an deinen Notizen.' },
-        { name: 'Tropenbastelplan', description: 'Plane diese kreative Aufgabe und speichere Inspirationen.' },
-        { name: 'Rosa Walhai Idee', description: 'Verfolge diese Idee mit Fotos, Dateien und Projektname.' }
-      ];
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+      import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
+        authDomain: "creativkp-4406e.firebaseapp.com",
+        projectId: "creativkp-4406e",
+        storageBucket: "creativkp-4406e.firebasestorage.app",
+        messagingSenderId: "1083893676278",
+        appId: "1:1083893676278:web:da4c821c45aab5cb1614d7"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      let projekte = [];
 
       const searchInput = document.getElementById('search-input');
       const searchResults = document.getElementById('search-results');
       const previewList = document.getElementById('preview-list');
       const projectDetail = document.getElementById('project-detail');
       const photoUpload = document.getElementById('photo-upload');
-      const fileUpload = document.getElementById('file-upload');
       const projectNameInput = document.getElementById('project-name');
       const saveButton = document.querySelector('.action-card button');
 
-      function renderSearchResults(query) {
-        const normalized = query.trim().toLowerCase();
-        const filtered = projects.filter((project) => project.name.toLowerCase().includes(normalized));
-        searchResults.innerHTML = '';
+      function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
 
-        if (!normalized) {
+      async function ladeProjekte() {
+        const q = query(collection(db, 'projekte'), orderBy('erstelltAm', 'desc'));
+        const snapshot = await getDocs(q);
+        projekte = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderPreviewList();
+        renderSearchResults(searchInput.value);
+      }
+
+      function renderPreviewList() {
+        previewList.innerHTML = '';
+        if (projekte.length === 0) {
+          previewList.innerHTML = '<p style="color:#5b4f53;margin:0">Noch keine Ideen gespeichert.</p>';
+          return;
+        }
+        projekte.forEach(p => {
+          const item = document.createElement('div');
+          item.className = 'preview-item';
+          item.innerHTML = `<strong>${p.name}</strong>`;
+          if (p.fotoBase64) {
+            const img = document.createElement('img');
+            img.src = p.fotoBase64;
+            img.alt = p.name;
+            item.appendChild(img);
+          }
+          previewList.appendChild(item);
+        });
+      }
+
+      function renderSearchResults(value) {
+        const q = value.trim().toLowerCase();
+        searchResults.innerHTML = '';
+        if (!q) {
           searchResults.innerHTML = '<div class="search-item"><span>Tippe einen Projektnamen, um ein Ergebnis zu sehen.</span></div>';
           projectDetail.style.display = 'none';
           return;
         }
-
+        const filtered = projekte.filter(p => p.name.toLowerCase().includes(q));
         if (filtered.length === 0) {
           searchResults.innerHTML = '<div class="search-item"><span>Keine Projekte gefunden.</span></div>';
           projectDetail.style.display = 'none';
           return;
         }
-
-        filtered.forEach((project) => {
+        filtered.forEach(p => {
           const item = document.createElement('div');
           item.className = 'search-item';
-          item.innerHTML = `
-            <span>${project.name}</span>
-            <a class="search-link" href="#" data-name="${project.name}">Öffnen</a>
-          `;
+          item.innerHTML = `<span>${p.name}</span><a class="search-link" href="#" data-id="${p.id}">Öffnen</a>`;
           searchResults.appendChild(item);
         });
       }
 
-      function showProjectDetail(name) {
-        const project = projects.find((item) => item.name === name);
-        if (!project) return;
+      function zeigeDetail(id) {
+        const p = projekte.find(x => x.id === id);
+        if (!p) return;
+        const datum = p.erstelltAm?.toDate?.()?.toLocaleDateString('de-DE') ?? '';
         projectDetail.style.display = 'block';
         projectDetail.innerHTML = `
-          <h3>${project.name}</h3>
-          <p>${project.description}</p>
+          <h3>${p.name}</h3>
+          ${datum ? `<p style="font-size:0.88rem;color:#999;margin:0 0 0.6rem">${datum}</p>` : ''}
+          ${p.fotoBase64 ? `<img src="${p.fotoBase64}" alt="${p.name}" style="width:100%;border-radius:18px;margin-top:0.4rem">` : ''}
         `;
       }
 
-      function addPreview(title, previewElement) {
-        const item = document.createElement('div');
-        item.className = 'preview-item';
-        item.innerHTML = `<strong>${title}</strong>`;
-        if (previewElement) {
-          item.appendChild(previewElement);
-        }
-        previewList.appendChild(item);
-      }
-
-      searchInput.addEventListener('input', (event) => {
-        renderSearchResults(event.target.value);
-      });
-
-      searchResults.addEventListener('click', (event) => {
-        const link = event.target.closest('.search-link');
-        if (!link) return;
-        event.preventDefault();
-        showProjectDetail(link.dataset.name);
-      });
-
-      saveButton.addEventListener('click', () => {
-        const name = projectNameInput.value.trim() || 'Unbenanntes Projekt';
+      saveButton.addEventListener('click', async () => {
+        const name = projectNameInput.value.trim();
+        if (!name) { projectNameInput.focus(); return; }
+        saveButton.disabled = true;
+        saveButton.textContent = 'Speichert…';
+        const data = { name, erstelltAm: serverTimestamp() };
         if (photoUpload.files.length > 0) {
-          const file = photoUpload.files[0];
-          const img = document.createElement('img');
-          img.src = URL.createObjectURL(file);
-          img.alt = file.name;
-          addPreview(name, img);
+          data.fotoBase64 = await fileToBase64(photoUpload.files[0]);
         }
-        if (fileUpload.files.length > 0) {
-          const file = fileUpload.files[0];
-          const filePreview = document.createElement('div');
-          filePreview.textContent = file.name;
-          filePreview.style.padding = '0.85rem 1rem';
-          filePreview.style.background = 'rgba(246, 184, 213, 0.16)';
-          filePreview.style.borderRadius = '16px';
-          addPreview(name, filePreview);
+        try {
+          await addDoc(collection(db, 'projekte'), data);
+          photoUpload.value = '';
+          projectNameInput.value = '';
+          await ladeProjekte();
+        } catch (err) {
+          console.error(err);
+          alert('Fehler beim Speichern. Bitte versuche es erneut.');
+        } finally {
+          saveButton.disabled = false;
+          saveButton.textContent = 'Speichern';
         }
-        if (photoUpload.files.length === 0 && fileUpload.files.length === 0) {
-          const note = document.createElement('p');
-          note.textContent = 'Bitte lade ein Foto oder eine Datei hoch, damit die Idee sichtbar wird.';
-          note.style.color = '#5b4f53';
-          note.style.margin = '0';
-          addPreview(name, note);
-        }
-        photoUpload.value = '';
-        fileUpload.value = '';
-        projectNameInput.value = '';
       });
 
-      renderSearchResults('');
+      searchInput.addEventListener('input', e => renderSearchResults(e.target.value));
+      searchResults.addEventListener('click', e => {
+        const link = e.target.closest('.search-link');
+        if (!link) return;
+        e.preventDefault();
+        zeigeDetail(link.dataset.id);
+      });
+
+      ladeProjekte();
     </script>
   </body>
 </html>

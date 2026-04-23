@@ -152,11 +152,24 @@
 
       @media (max-width: 720px) {
         .page {
-          padding: 28px 18px 60px;
+          padding: 24px 16px 50px;
         }
 
         .hero-title {
           font-size: clamp(2.5rem, 10vw, 3.5rem);
+        }
+
+        .search-bar {
+          padding: 0.95rem 1rem;
+        }
+
+        .project-item,
+        .project-link {
+          padding: 1.5rem 1.2rem;
+        }
+
+        .recent-item {
+          padding: 0.95rem 1rem;
         }
       }
     </style>
@@ -189,16 +202,43 @@
         </a>
       </div>
 
-      <div class="section-title" style="margin-top: 2.5rem;">Zuletzt angesehen</div>
-      <div class="recent-items">
-        <div class="recent-item">Kreativpalast</div>
-        <div class="recent-item">Malediven Memo</div>
-        <div class="recent-item">Bastelplan 2026</div>
+      <div class="section-title" style="margin-top: 2.5rem;">Zuletzt hinzugefügt</div>
+      <div id="recent-items" class="recent-items">
+        <div class="recent-item" style="color:#999">Wird geladen…</div>
       </div>
-
-      <p class="note">
-        Die Farben der Überschriften greifen das Pastellthema der Startseite auf und bleiben klar lesbar auf dem sanften Gelb.
-      </p>
     </main>
+
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+      import { getFirestore, collection, getDocs, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
+        authDomain: "creativkp-4406e.firebaseapp.com",
+        projectId: "creativkp-4406e",
+        storageBucket: "creativkp-4406e.firebasestorage.app",
+        messagingSenderId: "1083893676278",
+        appId: "1:1083893676278:web:da4c821c45aab5cb1614d7"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const container = document.getElementById('recent-items');
+
+      const q = query(collection(db, 'projekte'), orderBy('erstelltAm', 'desc'), limit(5));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        container.innerHTML = '<div class="recent-item" style="color:#999">Noch keine Projekte gespeichert.</div>';
+      } else {
+        container.innerHTML = '';
+        snapshot.docs.forEach(doc => {
+          const div = document.createElement('div');
+          div.className = 'recent-item';
+          div.textContent = doc.data().name;
+          container.appendChild(div);
+        });
+      }
+    </script>
   </body>
 </html>

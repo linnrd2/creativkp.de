@@ -43,7 +43,54 @@
 
       .hint { margin-top: 1.8rem; font-size: 0.95rem; color: #5a4b4f; }
 
-      @media (max-width: 720px) { .page { padding: 28px 18px 50px; } }
+      .add-form {
+        background: rgba(255,255,255,0.95);
+        border-radius: 28px;
+        padding: 2rem;
+        box-shadow: 0 26px 70px rgba(89, 65, 50, 0.1);
+        margin-bottom: 2rem;
+      }
+      .add-form h2 { margin: 0 0 1rem; font-size: 1.6rem; color: var(--pink); }
+      .add-form label { display: block; margin: 0.8rem 0 0.35rem; font-size: 0.95rem; color: #5c4f53; }
+      .add-form input[type="text"] {
+        width: 100%;
+        border: 1px solid rgba(107,87,86,0.2);
+        border-radius: 16px;
+        padding: 0.9rem 1rem;
+        background: rgba(255,255,255,0.96);
+        font-size: 0.98rem;
+        color: #3f343a;
+        font-family: inherit;
+        box-sizing: border-box;
+      }
+      .add-form button {
+        margin-top: 1rem;
+        border: none;
+        border-radius: 16px;
+        padding: 0.95rem 1.6rem;
+        background: #f6b8d5;
+        color: #3d2331;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.98rem;
+      }
+      .delete-btn {
+        float: right;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #c97a8a;
+        padding: 0;
+        line-height: 1;
+      }
+
+      @media (max-width: 720px) {
+        .page { padding: 24px 16px 48px; }
+        .list-panel { padding: 1.8rem 1.4rem; }
+        .list-panel li { padding: 1rem 1.1rem; }
+      }
     </style>
   </head>
   <body>
@@ -51,15 +98,95 @@
       <a class="back-link" href="projekte.html">← Zurück zu Projekte</a>
       <h1 class="headline">Materialliste</h1>
       <p class="description">Hier kannst du alles planen, was du für dein nächstes Bastelprojekt brauchst. Halte Materialien, Mengen und Details klar fest.</p>
+
+      <section class="add-form">
+        <h2>Material hinzufügen</h2>
+        <label for="mat-name">Name</label>
+        <input id="mat-name" type="text" placeholder="z.B. Schere, Kleber, Papier…" />
+        <label for="mat-details">Details</label>
+        <input id="mat-details" type="text" placeholder="Menge, Farbe, Hinweise…" />
+        <button type="button" id="mat-save">Hinzufügen</button>
+      </section>
+
       <section class="list-panel">
         <h2>Materialien</h2>
-        <ul>
-          <li><strong>Papier & Karton</strong><span>Stärke auswählen, Farben abstimmen und Vorräte überprüfen.</span></li>
-          <li><strong>Klebstoff & Werkzeug</strong><span>Schere, Kleber, Cutter, Lineal und Hilfsmittel gut sortieren.</span></li>
-          <li><strong>Dekoration</strong><span>Stoffe, Bänder, Perlen und Farben für den letzten Feinschliff.</span></li>
+        <ul id="material-list">
+          <li style="color:#999">Wird geladen…</li>
         </ul>
       </section>
-      <p class="hint">Die Pastellgelbe Gestaltung bleibt dem Homepage-Stil treu und schafft ein ruhiges Organisationsgefühl.</p>
     </main>
+
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+      import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
+        authDomain: "creativkp-4406e.firebaseapp.com",
+        projectId: "creativkp-4406e",
+        storageBucket: "creativkp-4406e.firebasestorage.app",
+        messagingSenderId: "1083893676278",
+        appId: "1:1083893676278:web:da4c821c45aab5cb1614d7"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const list = document.getElementById('material-list');
+      const nameInput = document.getElementById('mat-name');
+      const detailsInput = document.getElementById('mat-details');
+      const saveBtn = document.getElementById('mat-save');
+
+      async function ladeMaterialien() {
+        const q = query(collection(db, 'materialien'), orderBy('erstelltAm', 'desc'));
+        const snapshot = await getDocs(q);
+        list.innerHTML = '';
+        if (snapshot.empty) {
+          list.innerHTML = '<li style="color:#999">Noch keine Materialien eingetragen.</li>';
+          return;
+        }
+        snapshot.docs.forEach(docSnap => {
+          const d = docSnap.data();
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <button class="delete-btn" data-id="${docSnap.id}" title="Löschen">✕</button>
+            <strong>${d.name}</strong>
+            ${d.details ? `<span>${d.details}</span>` : ''}
+          `;
+          list.appendChild(li);
+        });
+      }
+
+      saveBtn.addEventListener('click', async () => {
+        const name = nameInput.value.trim();
+        if (!name) { nameInput.focus(); return; }
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Speichert…';
+        try {
+          await addDoc(collection(db, 'materialien'), {
+            name,
+            details: detailsInput.value.trim(),
+            erstelltAm: serverTimestamp()
+          });
+          nameInput.value = '';
+          detailsInput.value = '';
+          await ladeMaterialien();
+        } catch (err) {
+          console.error(err);
+          alert('Fehler beim Speichern.');
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Hinzufügen';
+        }
+      });
+
+      list.addEventListener('click', async e => {
+        const btn = e.target.closest('.delete-btn');
+        if (!btn) return;
+        await deleteDoc(doc(db, 'materialien', btn.dataset.id));
+        await ladeMaterialien();
+      });
+
+      ladeMaterialien();
+    </script>
   </body>
 </html>

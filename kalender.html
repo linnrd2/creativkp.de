@@ -27,7 +27,57 @@
       .event-item strong { display: block; margin-bottom: 0.6rem; color: #4b3f44; }
       .event-item p { margin: 0; color: #625656; line-height: 1.75; }
       .hint { margin-top: 1.8rem; font-size: 0.95rem; color: #5b4d52; }
-      @media (max-width: 720px) { .page { padding: 28px 18px 50px; } }
+
+      .add-form {
+        background: rgba(255,255,255,0.95);
+        border-radius: 28px;
+        padding: 2rem;
+        box-shadow: 0 26px 70px rgba(89, 65, 50, 0.1);
+        margin-bottom: 2rem;
+      }
+      .add-form h2 { margin: 0 0 1rem; font-size: 1.6rem; color: var(--pink); }
+      .add-form label { display: block; margin: 0.8rem 0 0.35rem; font-size: 0.95rem; color: #5c4f53; }
+      .add-form input[type="text"],
+      .add-form input[type="date"] {
+        width: 100%;
+        border: 1px solid rgba(107,87,86,0.2);
+        border-radius: 16px;
+        padding: 0.9rem 1rem;
+        background: rgba(255,255,255,0.96);
+        font-size: 0.98rem;
+        color: #3f343a;
+        font-family: inherit;
+        box-sizing: border-box;
+      }
+      .add-form button {
+        margin-top: 1rem;
+        border: none;
+        border-radius: 16px;
+        padding: 0.95rem 1.6rem;
+        background: #f6b8d5;
+        color: #3d2331;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 0.98rem;
+      }
+      .delete-btn {
+        float: right;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #c97a8a;
+        padding: 0;
+        line-height: 1;
+      }
+      .event-date { font-size: 0.88rem; color: #999; margin: 0.2rem 0 0; }
+
+      @media (max-width: 720px) {
+        .page { padding: 24px 16px 48px; }
+        .calendar-panel { padding: 1.8rem 1.4rem; }
+        .event-item { padding: 1.1rem 1.2rem; }
+      }
     </style>
   </head>
   <body>
@@ -35,15 +85,102 @@
       <a class="back-link" href="projekte.html">← Zurück zu Projekte</a>
       <h1 class="headline">Kalender</h1>
       <p class="description">Behalte alle Termine und wichtigen Tage im Blick. So behältst du deine Bastelprojekte strukturiert im Zeitplan.</p>
+
+      <section class="add-form">
+        <h2>Termin hinzufügen</h2>
+        <label for="termin-name">Name</label>
+        <input id="termin-name" type="text" placeholder="z.B. Projektstart, Creative Day…" />
+        <label for="termin-datum">Datum</label>
+        <input id="termin-datum" type="date" />
+        <label for="termin-beschreibung">Beschreibung</label>
+        <input id="termin-beschreibung" type="text" placeholder="Details zum Termin…" />
+        <button type="button" id="termin-save">Hinzufügen</button>
+      </section>
+
       <section class="calendar-panel">
         <h2>Geplante Termine</h2>
-        <div class="event-list">
-          <div class="event-item"><strong>Projektstart</strong><p>Erste Idee entwickeln und Materialien sammeln.</p></div>
-          <div class="event-item"><strong>Creative Day</strong><p>Fokuszeit für alle praktischen Schritte und Tests.</p></div>
-          <div class="event-item"><strong>Fertigstellung</strong><p>Abschluss, Deko und Vorbereitung für Präsentation.</p></div>
+        <div id="event-list" class="event-list">
+          <div class="event-item" style="color:#999">Wird geladen…</div>
         </div>
       </section>
-      <p class="hint">Die sanfte Gelb-Optik der Seite wirkt wie ein beruhigender Planungszeitraum für deine Projekte.</p>
     </main>
+
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
+      import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
+        authDomain: "creativkp-4406e.firebaseapp.com",
+        projectId: "creativkp-4406e",
+        storageBucket: "creativkp-4406e.firebasestorage.app",
+        messagingSenderId: "1083893676278",
+        appId: "1:1083893676278:web:da4c821c45aab5cb1614d7"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const eventList = document.getElementById('event-list');
+      const nameInput = document.getElementById('termin-name');
+      const datumInput = document.getElementById('termin-datum');
+      const beschInput = document.getElementById('termin-beschreibung');
+      const saveBtn = document.getElementById('termin-save');
+
+      async function ladeTermine() {
+        const q = query(collection(db, 'termine'), orderBy('datum', 'asc'));
+        const snapshot = await getDocs(q);
+        eventList.innerHTML = '';
+        if (snapshot.empty) {
+          eventList.innerHTML = '<div class="event-item" style="color:#999">Noch keine Termine eingetragen.</div>';
+          return;
+        }
+        snapshot.docs.forEach(docSnap => {
+          const d = docSnap.data();
+          const item = document.createElement('div');
+          item.className = 'event-item';
+          item.innerHTML = `
+            <button class="delete-btn" data-id="${docSnap.id}" title="Löschen">✕</button>
+            <strong>${d.name}</strong>
+            ${d.datum ? `<p class="event-date">${new Date(d.datum).toLocaleDateString('de-DE', { day:'2-digit', month:'long', year:'numeric' })}</p>` : ''}
+            ${d.beschreibung ? `<p>${d.beschreibung}</p>` : ''}
+          `;
+          eventList.appendChild(item);
+        });
+      }
+
+      saveBtn.addEventListener('click', async () => {
+        const name = nameInput.value.trim();
+        if (!name) { nameInput.focus(); return; }
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Speichert…';
+        try {
+          await addDoc(collection(db, 'termine'), {
+            name,
+            datum: datumInput.value || null,
+            beschreibung: beschInput.value.trim(),
+            erstelltAm: serverTimestamp()
+          });
+          nameInput.value = '';
+          datumInput.value = '';
+          beschInput.value = '';
+          await ladeTermine();
+        } catch (err) {
+          console.error(err);
+          alert('Fehler beim Speichern.');
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Hinzufügen';
+        }
+      });
+
+      eventList.addEventListener('click', async e => {
+        const btn = e.target.closest('.delete-btn');
+        if (!btn) return;
+        await deleteDoc(doc(db, 'termine', btn.dataset.id));
+        await ladeTermine();
+      });
+
+      ladeTermine();
+    </script>
   </body>
 </html>
