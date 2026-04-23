@@ -137,23 +137,28 @@
       const saveBtn = document.getElementById('mat-save');
 
       async function ladeMaterialien() {
-        const q = query(collection(db, 'materialien'), orderBy('erstelltAm', 'desc'));
-        const snapshot = await getDocs(q);
-        list.innerHTML = '';
-        if (snapshot.empty) {
-          list.innerHTML = '<li style="color:#999">Noch keine Materialien eingetragen.</li>';
-          return;
+        try {
+          const q = query(collection(db, 'materialien'), orderBy('erstelltAm', 'desc'));
+          const snapshot = await getDocs(q);
+          list.innerHTML = '';
+          if (snapshot.empty) {
+            list.innerHTML = '<li style="color:#999">Noch keine Materialien eingetragen.</li>';
+            return;
+          }
+          snapshot.docs.forEach(docSnap => {
+            const d = docSnap.data();
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <button class="delete-btn" data-id="${docSnap.id}" title="Löschen">✕</button>
+              <strong>${d.name}</strong>
+              ${d.details ? `<span>${d.details}</span>` : ''}
+            `;
+            list.appendChild(li);
+          });
+        } catch (err) {
+          console.error(err);
+          list.innerHTML = '<li style="color:#c97a8a">Fehler beim Laden. Seite neu laden.</li>';
         }
-        snapshot.docs.forEach(docSnap => {
-          const d = docSnap.data();
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <button class="delete-btn" data-id="${docSnap.id}" title="Löschen">✕</button>
-            <strong>${d.name}</strong>
-            ${d.details ? `<span>${d.details}</span>` : ''}
-          `;
-          list.appendChild(li);
-        });
       }
 
       saveBtn.addEventListener('click', async () => {

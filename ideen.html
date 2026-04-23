@@ -336,11 +336,16 @@
       }
 
       async function ladeProjekte() {
-        const q = query(collection(db, 'projekte'), orderBy('erstelltAm', 'desc'));
-        const snapshot = await getDocs(q);
-        projekte = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        renderPreviewList();
-        renderSearchResults(searchInput.value);
+        try {
+          const q = query(collection(db, 'projekte'), orderBy('erstelltAm', 'desc'));
+          const snapshot = await getDocs(q);
+          projekte = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          renderPreviewList();
+          renderSearchResults(searchInput.value);
+        } catch (err) {
+          console.error(err);
+          previewList.innerHTML = '<p style="color:#c97a8a;margin:0">Fehler beim Laden. Seite neu laden.</p>';
+        }
       }
 
       function renderPreviewList() {

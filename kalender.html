@@ -107,7 +107,7 @@
 
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
-      import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+      import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
       const firebaseConfig = {
         apiKey: "AIzaSyCQTyGwXNeqv58GSNyu7p2Z52VWf6weY3o",
@@ -127,25 +127,35 @@
       const saveBtn = document.getElementById('termin-save');
 
       async function ladeTermine() {
-        const q = query(collection(db, 'termine'), orderBy('datum', 'asc'));
-        const snapshot = await getDocs(q);
-        eventList.innerHTML = '';
-        if (snapshot.empty) {
-          eventList.innerHTML = '<div class="event-item" style="color:#999">Noch keine Termine eingetragen.</div>';
-          return;
+        try {
+          const snapshot = await getDocs(collection(db, 'termine'));
+          const alle = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          alle.sort((a, b) => {
+            if (!a.datum && !b.datum) return 0;
+            if (!a.datum) return 1;
+            if (!b.datum) return -1;
+            return a.datum.localeCompare(b.datum);
+          });
+          eventList.innerHTML = '';
+          if (alle.length === 0) {
+            eventList.innerHTML = '<div class="event-item" style="color:#999">Noch keine Termine eingetragen.</div>';
+            return;
+          }
+          alle.forEach(d => {
+            const item = document.createElement('div');
+            item.className = 'event-item';
+            item.innerHTML = `
+              <button class="delete-btn" data-id="${d.id}" title="Löschen">✕</button>
+              <strong>${d.name}</strong>
+              ${d.datum ? `<p class="event-date">${new Date(d.datum + 'T12:00:00').toLocaleDateString('de-DE', { day:'2-digit', month:'long', year:'numeric' })}</p>` : ''}
+              ${d.beschreibung ? `<p>${d.beschreibung}</p>` : ''}
+            `;
+            eventList.appendChild(item);
+          });
+        } catch (err) {
+          console.error(err);
+          eventList.innerHTML = '<div class="event-item" style="color:#c97a8a">Fehler beim Laden. Seite neu laden.</div>';
         }
-        snapshot.docs.forEach(docSnap => {
-          const d = docSnap.data();
-          const item = document.createElement('div');
-          item.className = 'event-item';
-          item.innerHTML = `
-            <button class="delete-btn" data-id="${docSnap.id}" title="Löschen">✕</button>
-            <strong>${d.name}</strong>
-            ${d.datum ? `<p class="event-date">${new Date(d.datum).toLocaleDateString('de-DE', { day:'2-digit', month:'long', year:'numeric' })}</p>` : ''}
-            ${d.beschreibung ? `<p>${d.beschreibung}</p>` : ''}
-          `;
-          eventList.appendChild(item);
-        });
       }
 
       saveBtn.addEventListener('click', async () => {
