@@ -1,1 +1,401 @@
-hallo
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>creativrd | Linn Elebro</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+      :root {
+        color-scheme: light;
+        --bg: #fff5bd;
+        --surface: #d8b89b;
+        --pink: #f6b8d5;
+        --pink-dark: #da8ea5;
+        --text: #2d1f24;
+        --muted: #5c4d4f;
+        --blue: #48c7d5;
+        --blue-soft: #a7ecf0;
+        --shadow: 0 36px 90px rgba(83, 65, 78, 0.12);
+        --radius: 40px;
+        --scroll: 0px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Poppins', system-ui, sans-serif;
+        color: var(--text);
+        background: radial-gradient(circle at top left, #fff9cc 0%, #fff1a2 32%, #f7d89b 62%, #fceecf 100%);
+        overflow-x: hidden;
+      }
+
+      .page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 32px 80px;
+        position: relative;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.95fr) 1.05fr;
+        align-items: center;
+        gap: 3.5rem;
+        min-height: calc(100vh - 80px);
+        position: relative;
+      }
+
+      .hero::before,
+      .hero::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(44px);
+        z-index: 0;
+      }
+
+      .hero::before {
+        width: 260px;
+        height: 260px;
+        top: 8%;
+        left: 0;
+        background: rgba(129, 211, 248, 0.22);
+      }
+
+      .hero::after {
+        width: 220px;
+        height: 220px;
+        bottom: 4%;
+        right: 6%;
+        background: rgba(255, 208, 192, 0.24);
+      }
+
+      .hero-visual {
+        position: relative;
+        z-index: 1;
+        align-self: start;
+        justify-self: start;
+      }
+
+      .hero-video {
+        width: 105%;
+        min-height: 620px;
+        border-radius: 42px;
+        background: linear-gradient(180deg, #96f5f9 0%, #53c6d8 55%, #247b93 100%);
+        box-shadow: 0 40px 90px rgba(50, 60, 92, 0.16);
+        overflow: hidden;
+        position: relative;
+        transform: rotate(-14deg) translate(-12%, -12%) translateY(calc(var(--scroll) * -0.08));
+        border: 14px solid rgba(255, 255, 255, 0.92);
+      }
+
+      .hero-video::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.24), transparent 32%);
+        pointer-events: none;
+      }
+
+      .hero-video::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 160px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.88) 100%);
+        mask-image: radial-gradient(circle at 50% 0, transparent 0%, black 60%);
+        pointer-events: none;
+      }
+
+      .hero-video video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .wave-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 140px;
+        pointer-events: none;
+      }
+
+      .wave-overlay svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.6rem;
+        padding-left: 1.5rem;
+      }
+
+      .hero-box {
+        background: linear-gradient(180deg, rgba(232, 194, 165, 0.94), rgba(245, 224, 205, 0.86));
+        background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 100%), repeating-linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.08) 1px, transparent 1px, transparent 18px);
+        border-radius: var(--radius);
+        padding: 3rem 2.4rem;
+        border: 1px solid rgba(255, 255, 255, 0.76);
+        box-shadow: 0 34px 92px rgba(92, 60, 52, 0.2);
+        transform: translateY(calc(var(--scroll) * 0.08));
+      }
+
+      .hero-title {
+        margin: 0;
+        font-size: clamp(4rem, 8vw, 7rem);
+        line-height: 0.92;
+        color: var(--pink);
+        letter-spacing: -0.07em;
+        font-weight: 800;
+        text-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.9), 0 18px 32px rgba(214, 145, 190, 0.14);
+      }
+
+      .hero-name {
+        margin: 0.4rem 0 0;
+        font-size: clamp(1.7rem, 3vw, 2.8rem);
+        color: var(--pink-dark);
+        font-weight: 600;
+      }
+
+      .hero-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1.4rem;
+        text-transform: uppercase;
+        letter-spacing: 0.25em;
+        color: #4f3935;
+        font-size: 0.82rem;
+        opacity: 0.8;
+      }
+
+      .hero-description {
+        max-width: 740px;
+        font-size: 1.05rem;
+        line-height: 1.85;
+        color: #3c3238;
+        margin: 0;
+      }
+
+      .scroll-cards {
+        display: grid;
+        gap: 1.4rem;
+        margin-top: 2.4rem;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.86);
+        border: 1px solid rgba(255, 255, 255, 0.74);
+        border-radius: 32px;
+        box-shadow: 0 30px 60px rgba(70, 54, 64, 0.09);
+        padding: 2rem;
+        backdrop-filter: blur(18px);
+        transform: translateY(48px);
+        opacity: 0;
+        transition: transform 0.8s ease, opacity 0.9s ease;
+      }
+
+      .card.visible {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .card h3 {
+        margin: 0 0 0.8rem;
+        font-size: 1.25rem;
+        color: #39272c;
+      }
+
+      .card p {
+        margin: 0;
+        color: #60535d;
+        line-height: 1.75;
+      }
+
+      .card-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .card-link h3 {
+        color: #1a1a1a;
+      }
+
+      .accent-grid {
+        position: absolute;
+        top: 22%;
+        right: -6%;
+        display: grid;
+        gap: 1.2rem;
+        z-index: 0;
+      }
+
+      .accent-dot {
+        width: 90px;
+        height: 90px;
+        background: rgba(255, 255, 255, 0.58);
+        border-radius: 26px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.65);
+      }
+
+      .accent-line {
+        width: 100px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.55);
+        border-radius: 999px;
+      }
+
+      .footer {
+        margin-top: 56px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        color: #5e4f50;
+        font-size: 0.95rem;
+      }
+
+      .footer a {
+        color: var(--blue);
+        text-decoration: none;
+      }
+
+      .float {
+        animation: float 7s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-16px); }
+      }
+
+      @media (max-width: 1080px) {
+        .hero {
+          grid-template-columns: 1fr;
+          min-height: auto;
+        }
+
+        .accent-grid {
+          display: none;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          padding: 28px 20px 60px;
+        }
+
+        .hero-box {
+          padding: 2rem 1.8rem;
+        }
+
+        .hero-title {
+          font-size: clamp(3rem, 12vw, 4.4rem);
+        }
+
+        .hero-name {
+          font-size: 2rem;
+        }
+
+        .hero-description {
+          font-size: 1rem;
+        }
+
+        .hero-video {
+          min-height: 420px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-visual">
+          <div class="hero-video float" aria-label="Walvideo">
+            <video autoplay muted loop playsinline>
+              <source src="walvideo-girlsday.mp4" type="video/mp4" />
+              Dein Browser unterstützt das Video nicht.
+            </video>
+            <div class="wave-overlay" aria-hidden="true">
+              <svg viewBox="0 0 1440 140" preserveAspectRatio="none">
+                <path d="M0,60 C240,90 360,20 640,70 C880,120 1000,40 1440,90 L1440,140 L0,140 Z" fill="rgba(255,255,255,0.55)" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-content">
+          <div class="hero-box">
+            <span class="hero-label">elegant und geschmeidig</span>
+            <h1 class="hero-title">creativrd</h1>
+            <p class="hero-name">Linn Elebro</p>
+          </div>
+
+          <p class="hero-description">
+            Hast mal wieder gar kein Plan was du als nächstes Bastelprojekt machen wolltest. Gar kein Problem, da bist du bei uns ganz richtig.
+            Bei uns kannst du deine Bastelideen oder die aus dem Internet aufschreiben oder speichern, sodass du deine Bastelziele verwirklichen kannst.
+          </p>
+
+          <div class="scroll-cards">
+            <article class="card">
+              <h3>Ideen-Flow</h3>
+              <p>Speichere deine Einfälle direkt ab und behalte jederzeit den Fokus für dein nächstes kreatives Projekt.</p>
+            </article>
+            <a class="card card-link" href="projekte.html">
+              <h3>Projekte</h3>
+              <p>Gehe hierhin, um deine Projektstruktur mit Ideen, Materialliste und Kalender zu organisieren.</p>
+            </a>
+            <article class="card">
+              <h3>Pastell &amp; Ästhetik</h3>
+              <p>Pastellgelb, zartes Rosa und Türkistöne schaffen eine freundliche, moderne Stimmung für die Seite.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <span>© 2026 creativkp.de</span>
+        <a href="https://github.com/linnrd2" target="_blank" rel="noopener">Github</a>
+      </div>
+    </main>
+
+    <script>
+      const cards = document.querySelectorAll('.card');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      cards.forEach((card) => observer.observe(card));
+
+      window.addEventListener('scroll', () => {
+        const scroll = window.scrollY;
+        document.documentElement.style.setProperty('--scroll', `${scroll * 0.08}px`);
+      });
+    </script>
+  </body>
+</html>
+
