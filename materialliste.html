@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Materialliste | creativrd</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+      :root { --pink: #f6b8d5; --text: #2d1f24; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Poppins', system-ui, sans-serif;
+        background: radial-gradient(circle at top left, #fff9cc 0%, #f7e4a7 40%, #f1d186 100%);
+        color: var(--text);
+      }
+
+      .page { max-width: 1000px; margin: 0 auto; padding: 36px 28px 60px; }
+      .back-link { display: inline-flex; align-items: center; gap: 0.6rem; color: #3b3b3b; text-decoration: none; margin-bottom: 1.8rem; }
+      .headline { margin: 0 0 1rem; font-size: clamp(2.8rem, 6vw, 4rem); color: var(--pink); }
+      .description { max-width: 720px; margin: 0 0 2rem; color: #4d3f42; line-height: 1.75; }
+
+      .list-panel {
+        background: rgba(255,255,255,0.95);
+        border-radius: 34px;
+        padding: 2.2rem;
+        box-shadow: 0 30px 72px rgba(89, 65, 50, 0.12);
+      }
+
+      .list-panel h2 { margin: 0 0 1rem; font-size: 1.85rem; color: var(--pink); }
+      .list-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+      .list-panel li {
+        padding: 1.3rem 1.4rem;
+        border-radius: 24px;
+        background: #fff7dd;
+        color: #54484c;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+      }
+      .list-panel li strong { display: block; margin-bottom: 0.45rem; font-size: 1rem; color: #4d3f43; }
+      .list-panel p { margin: 0; line-height: 1.75; }
+
+      .hint { margin-top: 1.8rem; font-size: 0.95rem; color: #5a4b4f; }
+
+      @media (max-width: 720px) { .page { padding: 28px 18px 50px; } }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <a class="back-link" href="projekte.html">← Zurück zu Projekte</a>
+      <h1 class="headline">Materialliste</h1>
+      <p class="description">Hier kannst du alles planen, was du für dein nächstes Bastelprojekt brauchst. Halte Materialien, Mengen und Details klar fest.</p>
+      <section class="list-panel">
+        <h2>Materialien</h2>
+        <ul>
+          <li><strong>Papier & Karton</strong><span>Stärke auswählen, Farben abstimmen und Vorräte überprüfen.</span></li>
+          <li><strong>Klebstoff & Werkzeug</strong><span>Schere, Kleber, Cutter, Lineal und Hilfsmittel gut sortieren.</span></li>
+          <li><strong>Dekoration</strong><span>Stoffe, Bänder, Perlen und Farben für den letzten Feinschliff.</span></li>
+        </ul>
+      </section>
+      <p class="hint">Die Pastellgelbe Gestaltung bleibt dem Homepage-Stil treu und schafft ein ruhiges Organisationsgefühl.</p>
+    </main>
+  </body>
+</html>

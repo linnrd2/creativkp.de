@@ -58,30 +58,90 @@
         line-height: 1.75;
       }
 
+      .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        max-width: 600px;
+        margin: 1.2rem 0 1.8rem;
+        padding: 1rem 1.2rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+      }
+
+      .search-icon {
+        font-size: 1.1rem;
+      }
+
+      .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 1rem;
+        background: transparent;
+        color: var(--text);
+      }
+
+      .section-title {
+        margin: 0 0 1rem;
+        font-size: 0.95rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #4f3f3f;
+        opacity: 0.85;
+      }
+
       .project-list {
         display: grid;
         gap: 1.5rem;
       }
 
-      .project-item {
+      .project-item,
+      .project-link {
         background: rgba(255, 245, 187, 0.95);
         border: 1px solid rgba(255, 255, 255, 0.78);
         border-radius: 32px;
         padding: 2.2rem 2rem;
         box-shadow: 0 26px 70px rgba(91, 57, 44, 0.12);
+        display: block;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        text-decoration: none;
       }
 
-      .project-item h2 {
+      .project-link:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 80px rgba(91, 57, 44, 0.16);
+      }
+
+      .project-item h2,
+      .project-link h2 {
         margin: 0;
         font-size: 1.85rem;
         color: var(--pink);
       }
 
-      .project-item p {
+      .project-item p,
+      .project-link p {
         margin: 0.75rem 0 0;
         color: #5b4e53;
         font-size: 1rem;
         line-height: 1.75;
+      }
+
+      .recent-items {
+        display: grid;
+        gap: 0.85rem;
+        margin-top: 0.75rem;
+      }
+
+      .recent-item {
+        background: rgba(255, 255, 255, 0.88);
+        border-radius: 20px;
+        padding: 1rem 1.2rem;
+        color: #4b3f42;
+        font-size: 0.98rem;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.75);
       }
 
       .note {
@@ -105,23 +165,35 @@
     <main class="page">
       <a class="back-link" href="index.html">← Zurück zur Startseite</a>
       <h1 class="hero-title">Projekte</h1>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="search" placeholder="Projekte suchen..." aria-label="Projekte suchen" />
+      </div>
       <p class="hero-description">
-        Hier findest du die wichtigsten Bereiche für deine kreative Planung. Wähle Ideen, Materialliste oder Kalender und starte mit einer strukturierten Projektübersicht.
+        Hier findest du die wichtigsten Bereiche für deine kreative Planung. Wähle einen Bereich und öffne die passende Projektseite.
       </p>
 
+      <div class="section-title">Namen</div>
       <div class="project-list">
-        <div class="project-item">
+        <a class="project-item project-link" href="ideen.html">
           <h2>Ideen</h2>
-          <p>Hebe deine Vorschläge und Projekte auf, damit du jederzeit wieder kreativ loslegen kannst.</p>
-        </div>
-        <div class="project-item">
+          <p>Halte deine kreativsten Gedanken fest und öffne deine Ideensammlung.</p>
+        </a>
+        <a class="project-item project-link" href="materialliste.html">
           <h2>Materialliste</h2>
-          <p>Organisiere alle Werkstoffe und Materialien, die du für dein nächstes Bastelprojekt brauchst.</p>
-        </div>
-        <div class="project-item">
+          <p>Füge benötigte Materialien hinzu und plane deine Bastelprojekte strukturiert.</p>
+        </a>
+        <a class="project-item project-link" href="kalender.html">
           <h2>Kalender</h2>
-          <p>Plane deine Termine und Meilensteine, damit dein Projekt gut strukturiert und entspannt bleibt.</p>
-        </div>
+          <p>Verwalte Termine und Meilensteine für deine Projekte.</p>
+        </a>
+      </div>
+
+      <div class="section-title" style="margin-top: 2.5rem;">Zuletzt angesehen</div>
+      <div class="recent-items">
+        <div class="recent-item">Kreativpalast</div>
+        <div class="recent-item">Malediven Memo</div>
+        <div class="recent-item">Bastelplan 2026</div>
       </div>
 
       <p class="note">

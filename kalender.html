@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalender | creativrd</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+      :root { --pink: #f6b8d5; --text: #2d1f24; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Poppins', system-ui, sans-serif;
+        background: radial-gradient(circle at top left, #fff8ca 0%, #f7e4a5 44%, #efce72 100%);
+        color: var(--text);
+      }
+      .page { max-width: 1000px; margin: 0 auto; padding: 36px 28px 60px; }
+      .back-link { display: inline-flex; align-items: center; gap: 0.6rem; color: #3b3b3b; text-decoration: none; margin-bottom: 1.8rem; }
+      .headline { margin: 0 0 1rem; font-size: clamp(2.8rem, 6vw, 4rem); color: var(--pink); }
+      .description { max-width: 720px; margin: 0 0 2rem; color: #4d3f42; line-height: 1.75; }
+      .calendar-panel { background: rgba(255,255,255,0.96); border-radius: 38px; padding: 2.4rem; box-shadow: 0 32px 80px rgba(89, 65, 47, 0.12); }
+      .calendar-panel h2 { margin: 0 0 1rem; font-size: 1.9rem; color: var(--pink); }
+      .event-list { display: grid; gap: 1.2rem; }
+      .event-item { padding: 1.4rem 1.5rem; border-radius: 24px; background: #fff8df; border: 1px solid rgba(255,255,255,0.82); }
+      .event-item strong { display: block; margin-bottom: 0.6rem; color: #4b3f44; }
+      .event-item p { margin: 0; color: #625656; line-height: 1.75; }
+      .hint { margin-top: 1.8rem; font-size: 0.95rem; color: #5b4d52; }
+      @media (max-width: 720px) { .page { padding: 28px 18px 50px; } }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <a class="back-link" href="projekte.html">← Zurück zu Projekte</a>
+      <h1 class="headline">Kalender</h1>
+      <p class="description">Behalte alle Termine und wichtigen Tage im Blick. So behältst du deine Bastelprojekte strukturiert im Zeitplan.</p>
+      <section class="calendar-panel">
+        <h2>Geplante Termine</h2>
+        <div class="event-list">
+          <div class="event-item"><strong>Projektstart</strong><p>Erste Idee entwickeln und Materialien sammeln.</p></div>
+          <div class="event-item"><strong>Creative Day</strong><p>Fokuszeit für alle praktischen Schritte und Tests.</p></div>
+          <div class="event-item"><strong>Fertigstellung</strong><p>Abschluss, Deko und Vorbereitung für Präsentation.</p></div>
+        </div>
+      </section>
+      <p class="hint">Die sanfte Gelb-Optik der Seite wirkt wie ein beruhigender Planungszeitraum für deine Projekte.</p>
+    </main>
+  </body>
+</html>

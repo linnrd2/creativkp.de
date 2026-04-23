@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ideen | creativrd</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+      :root {
+        --bg: #fff5bd;
+        --pink: #f6b8d5;
+        --text: #2d1f24;
+        --panel: rgba(255, 255, 255, 0.92);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Poppins', system-ui, sans-serif;
+        background: radial-gradient(circle at top left, #fff9cc 0%, #f9e8a8 45%, #f1d887 100%);
+        color: var(--text);
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 36px 28px 60px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: #3b3b3b;
+        text-decoration: none;
+        margin-bottom: 1.8rem;
+      }
+
+      .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 1rem 1.2rem;
+        border-radius: 999px;
+        background: var(--panel);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7);
+        margin-bottom: 1.8rem;
+      }
+
+      .search-icon { font-size: 1.15rem; }
+      .search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      .headline {
+        margin: 0 0 1rem;
+        font-size: clamp(2.75rem, 6vw, 4.4rem);
+        color: var(--pink);
+      }
+
+
+      .idea-panel {
+        position: relative;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid rgba(255,255,255,0.84);
+        border-radius: 40px;
+        padding: 2.5rem 2rem 2rem;
+        box-shadow: 0 34px 80px rgba(73, 54, 52, 0.14);
+        overflow: hidden;
+      }
+
+      .idea-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 3rem;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(180deg, rgba(246, 184, 213, 0.9), rgba(218, 142, 165, 0.35));
+        border-radius: 999px;
+      }
+
+      .idea-panel h2 {
+        margin: 0 0 1rem;
+        font-size: 2.2rem;
+        color: #3d2f35;
+      }
+
+      .idea-panel p {
+        margin: 0 0 2rem;
+        color: #5c4f53;
+        line-height: 1.75;
+      }
+
+      .action-grid {
+        display: grid;
+        gap: 1.2rem;
+      }
+
+      .action-card {
+        padding: 1.4rem 1.4rem;
+        border-radius: 28px;
+        background: #fff7df;
+        border: 1px solid rgba(255,255,255,0.82);
+      }
+
+      .action-card h3 {
+        margin: 0 0 0.65rem;
+        color: #af6a86;
+      }
+
+      .action-card label {
+        display: block;
+        margin: 0.9rem 0 0.4rem;
+        font-size: 0.95rem;
+        color: #5c4f53;
+      }
+
+      .action-card input[type="file"],
+      .action-card input[type="text"] {
+        width: 100%;
+        border: 1px solid rgba(107, 87, 86, 0.2);
+        border-radius: 16px;
+        padding: 0.9rem 1rem;
+        background: rgba(255,255,255,0.96);
+        font-size: 0.98rem;
+        color: #3f343a;
+      }
+
+      .action-card button {
+        margin-top: 0.9rem;
+        border: none;
+        border-radius: 16px;
+        padding: 0.95rem 1.2rem;
+        background: #f6b8d5;
+        color: #3d2331;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .search-results {
+        display: grid;
+        gap: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .search-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.2rem;
+        border-radius: 24px;
+        background: rgba(255,255,255,0.95);
+        border: 1px solid rgba(255,255,255,0.8);
+        box-shadow: 0 18px 46px rgba(71, 54, 56, 0.08);
+      }
+
+      .search-item span {
+        color: #4d3f43;
+        font-weight: 700;
+      }
+
+      .search-link {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 700;
+        background: #f6b8d5;
+        border-radius: 14px;
+        padding: 0.65rem 0.95rem;
+      }
+
+      .preview-section {
+        margin-top: 2rem;
+      }
+
+      .preview-title {
+        margin: 0 0 1rem;
+        font-size: 1.4rem;
+        color: #3f3036;
+      }
+
+      .preview-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .preview-item {
+        display: grid;
+        gap: 0.75rem;
+        padding: 1.4rem;
+        border-radius: 28px;
+        background: rgba(255,255,255,0.97);
+        border: 1px solid rgba(255,255,255,0.8);
+        box-shadow: 0 18px 45px rgba(78, 63, 61, 0.08);
+      }
+
+      .preview-item strong {
+        color: #4a3d3f;
+      }
+
+      .preview-item img {
+        width: 100%;
+        border-radius: 18px;
+        object-fit: cover;
+      }
+
+      .project-detail {
+        margin-top: 2rem;
+        padding: 1.8rem;
+        border-radius: 32px;
+        background: rgba(255,255,255,0.96);
+        border: 1px solid rgba(255,255,255,0.85);
+        box-shadow: 0 26px 62px rgba(83, 61, 57, 0.1);
+        display: none;
+      }
+
+      .project-detail h3 {
+        margin: 0 0 0.8rem;
+        font-size: 1.5rem;
+        color: #4a3d3f;
+      }
+
+      .project-detail p {
+        margin: 0;
+        color: #564b4f;
+        line-height: 1.8;
+      }
+
+      .recent-list {
+        display: grid;
+        gap: 0.85rem;
+      }
+
+      .recent-list div {
+        background: rgba(255,255,255,0.9);
+        padding: 1rem 1.2rem;
+        border-radius: 18px;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.78);
+      }
+
+      @media (max-width: 860px) {
+        .action-grid { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 720px) {
+        .page { padding: 28px 18px 50px; }
+        .headline { font-size: clamp(2.5rem, 12vw, 3.5rem); }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <a class="back-link" href="projekte.html">← Zurück zu Projekte</a>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input id="search-input" class="search-input" type="search" placeholder="Projekt suchen..." aria-label="Projekt suchen" />
+      </div>
+      <div id="search-results" class="search-results" aria-live="polite"></div>
+      <h1 class="headline">Ideen</h1>
+      <div class="idea-panel">
+        <h2>Deine Ideen eintragen</h2>
+        <p>Fotografiere deine Skizzen, füge Dateien hinzu und notiere den Projektnamen direkt darunter.</p>
+        <div class="action-grid">
+          <div class="action-card">
+            <h3>Foto hinzufügen</h3>
+            <label for="photo-upload">Foto oder Bild auswählen</label>
+            <input id="photo-upload" type="file" accept="image/*" />
+          </div>
+          <div class="action-card">
+            <h3>Datei einfügen</h3>
+            <label for="file-upload">Datei auswählen</label>
+            <input id="file-upload" type="file" />
+          </div>
+          <div class="action-card">
+            <h3>Projektname</h3>
+            <label for="project-name">Name deines Projekts</label>
+            <input id="project-name" type="text" placeholder="Projektname eingeben" />
+            <button type="button">Speichern</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-section" aria-live="polite">
+        <h2 class="preview-title">Hochgeladene Ideen</h2>
+        <div id="preview-list" class="preview-list"></div>
+      </div>
+
+      <div id="project-detail" class="project-detail" aria-live="polite"></div>
+    </main>
+
+    <script>
+      const projects = [
+        { name: 'Meerespapier Projekt', description: 'Öffne diese Projektidee direkt und arbeite an deinen Notizen.' },
+        { name: 'Tropenbastelplan', description: 'Plane diese kreative Aufgabe und speichere Inspirationen.' },
+        { name: 'Rosa Walhai Idee', description: 'Verfolge diese Idee mit Fotos, Dateien und Projektname.' }
+      ];
+
+      const searchInput = document.getElementById('search-input');
+      const searchResults = document.getElementById('search-results');
+      const previewList = document.getElementById('preview-list');
+      const projectDetail = document.getElementById('project-detail');
+      const photoUpload = document.getElementById('photo-upload');
+      const fileUpload = document.getElementById('file-upload');
+      const projectNameInput = document.getElementById('project-name');
+      const saveButton = document.querySelector('.action-card button');
+
+      function renderSearchResults(query) {
+        const normalized = query.trim().toLowerCase();
+        const filtered = projects.filter((project) => project.name.toLowerCase().includes(normalized));
+        searchResults.innerHTML = '';
+
+        if (!normalized) {
+          searchResults.innerHTML = '<div class="search-item"><span>Tippe einen Projektnamen, um ein Ergebnis zu sehen.</span></div>';
+          projectDetail.style.display = 'none';
+          return;
+        }
+
+        if (filtered.length === 0) {
+          searchResults.innerHTML = '<div class="search-item"><span>Keine Projekte gefunden.</span></div>';
+          projectDetail.style.display = 'none';
+          return;
+        }
+
+        filtered.forEach((project) => {
+          const item = document.createElement('div');
+          item.className = 'search-item';
+          item.innerHTML = `
+            <span>${project.name}</span>
+            <a class="search-link" href="#" data-name="${project.name}">Öffnen</a>
+          `;
+          searchResults.appendChild(item);
+        });
+      }
+
+      function showProjectDetail(name) {
+        const project = projects.find((item) => item.name === name);
+        if (!project) return;
+        projectDetail.style.display = 'block';
+        projectDetail.innerHTML = `
+          <h3>${project.name}</h3>
+          <p>${project.description}</p>
+        `;
+      }
+
+      function addPreview(title, previewElement) {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `<strong>${title}</strong>`;
+        if (previewElement) {
+          item.appendChild(previewElement);
+        }
+        previewList.appendChild(item);
+      }
+
+      searchInput.addEventListener('input', (event) => {
+        renderSearchResults(event.target.value);
+      });
+
+      searchResults.addEventListener('click', (event) => {
+        const link = event.target.closest('.search-link');
+        if (!link) return;
+        event.preventDefault();
+        showProjectDetail(link.dataset.name);
+      });
+
+      saveButton.addEventListener('click', () => {
+        const name = projectNameInput.value.trim() || 'Unbenanntes Projekt';
+        if (photoUpload.files.length > 0) {
+          const file = photoUpload.files[0];
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.alt = file.name;
+          addPreview(name, img);
+        }
+        if (fileUpload.files.length > 0) {
+          const file = fileUpload.files[0];
+          const filePreview = document.createElement('div');
+          filePreview.textContent = file.name;
+          filePreview.style.padding = '0.85rem 1rem';
+          filePreview.style.background = 'rgba(246, 184, 213, 0.16)';
+          filePreview.style.borderRadius = '16px';
+          addPreview(name, filePreview);
+        }
+        if (photoUpload.files.length === 0 && fileUpload.files.length === 0) {
+          const note = document.createElement('p');
+          note.textContent = 'Bitte lade ein Foto oder eine Datei hoch, damit die Idee sichtbar wird.';
+          note.style.color = '#5b4f53';
+          note.style.margin = '0';
+          addPreview(name, note);
+        }
+        photoUpload.value = '';
+        fileUpload.value = '';
+        projectNameInput.value = '';
+      });
+
+      renderSearchResults('');
+    </script>
+  </body>
+</html>
